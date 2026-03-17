@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toy Factory Nightmare</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+    }
+    
+    #gameContainer {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .ui-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      pointer-events: all;
+    }
+    
+    .loading-content {
+      text-align: center;
+      max-width: 600px;
+    }
+    
+    .game-title {
+      font-size: 3.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #ff4444, #ff8844, #ffaa44);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+    }
+    
+    .loading-text {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      border: 1px solid #555;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff4444, #ff8844);
+      width: 0%;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+    }
+    
+    .progress-text {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    
+    .permission-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1a1a1a;
+      border: 2px solid #ff4444;
+      border-radius: 10px;
+      padding: 40px;
+      max-width: 500px;
+      z-index: 2000;
+      pointer-events: all;
+      box-shadow: 0 0 50px rgba(255, 68, 68, 0.3);
+    }
+    
+    .permission-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #ff8844;
+    }
+    
+    .permission-text {
+      font-size: 1rem;
+      margin-bottom: 30px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 12px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    
+    .btn-allow {
+      background: linear-gradient(45deg, #ff4444, #ff8844);
+      color: #fff;
+      flex: 1;
+    }
+    
+    .btn-allow:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 68, 68, 0.6);
+    }
+    
+    .btn-deny {
+      background: #333;
+      color: #aaa;
+      flex: 1;
+      border: 1px solid #555;
+    }
+    
+    .btn-deny:hover {
+      background: #444;
+      color: #fff;
+    }
+    
+    .hud {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #555;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 0.85rem;
+      max-width: 300px;
+      pointer-events: all;
+      z-index: 200;
+      display: none;
+    }
+    
+    .hud.active {
+      display: block;
+    }
+    
+    .hud-title {
+      color: #ff8844;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #555;
+      padding-bottom: 8px;
+    }
+    
+    .hud-item {
+      color: #aaa;
+      margin: 5px 0;
+      line-height: 1.4;
+    }
+    
+    .hud-key {
+      color: #ff8844;
+      font-weight: bold;
+    }
+    
+    .pause-menu {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1a1a1a;
+      border: 2px solid #ff4444;
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      z-index: 1500;
+      pointer-events: all;
+      display: none;
+      box-shadow: 0 0 50px rgba(255, 68, 68, 0.3);
+    }
+    
+    .pause-menu.active {
+      display: block;
+    }
+    
+    .pause-title {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      color: #ff8844;
+    }
+    
+    .pause-menu-item {
+      padding: 15px;
+      margin: 10px 0;
+      background: #2a2a2a;
+      border: 1px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #ccc;
+      transition: all 0.3s ease;
+    }
+    
+    .pause-menu-item:hover {
+      background: #ff4444;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    
+    .main-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      pointer-events: all;
+    }
+    
+    .main-menu.hidden {
+      display: none;
+    }
+    
+    .menu-logo {
+      font-size: 4rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #ff4444, #ff8844, #ffaa44);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+    }
+    
+    .menu-subtitle {
+      font-size: 1.2rem;
+      color: #aaa;
+      margin-bottom: 50px;
+    }
+    
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      min-width: 300px;
+    }
+    
+    .menu-btn {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      background: linear-gradient(45deg, #ff4444, #ff8844);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+    
+    .menu-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 68, 68, 0.6);
+    }
+    
+    .menu-btn.secondary {
+      background: #333;
+      border: 1px solid #555;
+    }
+    
+    .menu-btn.secondary:hover {
+      background: #444;
+      border-color: #ff8844;
+    }
+    
+    .credits-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      pointer-events: all;
+      overflow-y: auto;
+      padding: 40px 20px;
+    }
+    
+    .credits-screen.hidden {
+      display: none;
+    }
+    
+    .credits-content {
+      max-width: 600px;
+      text-align: center;
+    }
+    
+    .credits-title {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      color: #ff8844;
+    }
+    
+    .credits-section {
+      margin-bottom: 30px;
+    }
+    
+    .credits-label {
+      color: #ff8844;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .credits-text {
+      color: #ccc;
+      line-height: 1.8;
+    }
+    
+    .back-btn {
+      margin-top: 40px;
+      padding: 12px 30px;
+      background: #333;
+      color: #aaa;
+      border: 1px solid #555;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: #444;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <canvas id="canvas"></canvas>
+  </div>
+  
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="game-title">TOY FACTORY NIGHTMARE</div>
+      <div class="loading-text">Initializing Game Engine...</div>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div id="progressText" class="progress-text">0%</div>
+    </div>
+  </div>
+  
+  <div id="permissionDialog" class="permission-dialog" style="display: none;">
+    <div class="permission-title">Download Game Resources</div>
+    <div class="permission-text">
+      This game requires downloading 150-250 MB of textures, 3D models, and audio files for the best experience. This is a one-time download that will be cached locally.
+    </div>
+    <div class="button-group">
+      <button class="btn btn-allow" id="allowBtn">Allow Download</button>
+      <button class="btn btn-deny" id="denyBtn">Skip</button>
+    </div>
+  </div>
+  
+  <div id="mainMenu" class="main-menu">
+    <div class="menu-logo">TOY FACTORY NIGHTMARE</div>
+    <div class="menu-subtitle">A Horror Experience</div>
+    <div class="menu-buttons">
+      <button class="menu-btn" id="newGameBtn">New Game</button>
+      <button class="menu-btn secondary" id="creditsBtn">Credits</button>
+      <button class="menu-btn secondary" id="quitBtn">Quit</button>
+    </div>
+  </div>
+  
+  <div id="creditsScreen" class="credits-screen hidden">
+    <div class="credits-content">
+      <div class="credits-title">CREDITS</div>
+      
+      <div class="credits-section">
+        <div class="credits-label">Created by</div>
+        <div class="credits-text">Rifat Radli Hidayat</div>
+      </div>
+      
+      <div class="credits-section">
+        <div class="credits-label">Developed by</div>
+        <div class="credits-text">EXELCIOR DE ROOTS</div>
+      </div>
+      
+      <div class="credits-section">
+        <div class="credits-label">Engine</div>
+        <div class="credits-text">Custom Three.js AAA Pipeline</div>
+      </div>
+      
+      <div class="credits-section">
+        <div class="credits-label">Special Thanks</div>
+        <div class="credits-text">All asset creators and the open-source community</div>
+      </div>
+      
+      <button class="back-btn" id="backFromCreditsBtn">Back to Menu</button>
+    </div>
+  </div>
+  
+  <div class="ui-overlay">
+    <div id="hud" class="hud">
+      <div class="hud-title">CONTROLS</div>
+      <div class="hud-item"><span class="hud-key">WASD</span> = Move</div>
+      <div class="hud-item"><span class="hud-key">Mouse</span> = Look around</div>
+      <div class="hud-item"><span class="hud-key">Shift</span> = Run</div>
+      <div class="hud-item"><span class="hud-key">Ctrl</span> = Crouch</div>
+      <div class="hud-item"><span class="hud-key">E</span> = Interact</div>
+      <div class="hud-item"><span class="hud-key">F</span> = Flashlight</div>
+      <div class="hud-item"><span class="hud-key">Tab</span> = Inventory</div>
+      <div class="hud-item"><span class="hud-key">Esc</span> = Pause Menu</div>
+      <div class="hud-item"><span class="hud-key">H</span> = Toggle Help</div>
+    </div>
+    
+    <div id="pauseMenu" class="pause-menu">
+      <div class="pause-title">PAUSED</div>
+      <div class="pause-menu-item" id="resumeBtn">Resume Game</div>
+      <div class="pause-menu-item" id="backFromPauseBtn">Back to Menu</div>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r168/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/postprocessing/UnrealBloomPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@r168/examples/js/shaders/FXAAShader.js"></script>
+  
+  <script>
+    class ToyFactoryNightmare {
+      constructor() {
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.composer = null;
+        this.gameState = 'menu';
+        this.assets = {};
+        this.player = {
+          position: new THREE.Vector3(0, 1.6, 0),
+          velocity: new THREE.Vector3(0, 0, 0),
+          speed: 0.1,
+          runSpeed: 0.2,
+          crouchSpeed: 0.05,
+          isRunning: false,
+          isCrouching: false,
+          flashlightOn: false,
+          inventory: [],
+          health: 100,
+          stamina: 100
+        };
+        this.keys = {};
+        this.mouse = { x: 0, y: 0, locked: false };
+        this.enemies = [];
+        this.puzzles = [];
+        this.loreNotes = [];
+        this.currentChapter = 1;
+        this.showHUD = false;
+        
+        this.init();
+      }
+      
+      init() {
+        this.setupScene();
+        this.setupCamera();
+        this.setupRenderer();
+        this.setupLighting();
+        this.setupPostProcessing();
+        this.setupControls();
+        this.setupEventListeners();
+        this.showPermissionDialog();
+      }
+      
+      setupScene() {
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x0a0a0a);
+        this.scene.fog = new THREE.Fog(0x0a0a0a, 5, 100);
+      }
+      
+      setupCamera() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+        this.camera.position.copy(this.player.position);
+      }
+      
+      setupRenderer() {
+        const canvas = document.getElementById('canvas');
+        this.renderer = new THREE.WebGLRenderer({ 
+          canvas, 
+          antialias: true,
+          alpha: false
+        });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+        this.renderer.toneMappingExposure = 1.0;
+      }
+      
+      setupLighting() {
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        this.scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(10, 20, 10);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.camera.left = -50;
+        directionalLight.shadow.camera.right = 50;
+        directionalLight.shadow.camera.top = 50;
+        directionalLight.shadow.camera.bottom = -50;
+        directionalLight.shadow.camera.near = 0.1;
+        directionalLight.shadow.camera.far = 100;
+        this.scene.add(directionalLight);
+        
+        this.flashlight = new THREE.SpotLight(0xffffff, 1.5, 50, Math.PI / 6, 0.5, 2);
+        this.flashlight.position.copy(this.camera.position);
+        this.flashlight.target.position.copy(this.camera.position).add(new THREE.Vector3(0, 0, -1));
+        this.flashlight.castShadow = true;
+        this.flashlight.visible = false;
+        this.scene.add(this.flashlight);
+        this.scene.add(this.flashlight.target);
+      }
+      
+      setupPostProcessing() {
+        this.composer = new THREE.EffectComposer(this.renderer);
+        
+        const renderPass = new THREE.RenderPass(this.scene, this.camera);
+        this.composer.addPass(renderPass);
+        
+        const bloomPass = new THREE.UnrealBloomPass(
+          new THREE.Vector2(window.innerWidth, window.innerHeight),
+          1.5,
+          0.4,
+          0.85
+        );
+        this.composer.addPass(bloomPass);
+        
+        const fxaaPass = new THREE.ShaderPass(THREE.FXAAShader);
+        fxaaPass.uniforms['resolution'].value.x = 1 / window.innerWidth;
+        fxaaPass.uniforms['resolution'].value.y = 1 / window.innerHeight;
+        this.composer.addPass(fxaaPass);
+      }
+      
+      setupControls() {
+        document.addEventListener('keydown', (e) => {
+          this.keys[e.key.toLowerCase()] = true;
+          
+          if (e.key === 'Escape') {
+            this.togglePause();
+          } else if (e.key === 'f' || e.key === 'F') {
+            if (this.gameState === 'playing') {
+              this.player.flashlightOn = !this.player.flashlightOn;
+              this.flashlight.visible = this.player.flashlightOn;
+            }
+          } else if (e.key === 'h' || e.key === 'H') {
+            if (this.gameState === 'playing') {
+              this.toggleHUD();
+            }
+          }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+          this.keys[e.key.toLowerCase()] = false;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+          if (this.gameState === 'playing') {
+            this.mouse.x = e.movementX;
+            this.mouse.y = e.movementY;
+          }
+        });
+        
+        document.addEventListener('click', () => {
+          if (this.gameState === 'playing') {
+            this.renderer.domElement.requestPointerLock();
+          }
+        });
+        
+        document.addEventListener('pointerlockchange', () => {
+          this.mouse.locked = document.pointerLockElement === this.renderer.domElement;
+        });
+        
+        window.addEventListener('resize', () => this.onWindowResize());
+      }
+      
+      setupEventListeners() {
+        document.getElementById('allowBtn').addEventListener('click', () => this.allowDownload());
+        document.getElementById('denyBtn').addEventListener('click', () => this.denyDownload());
+        document.getElementById('newGameBtn').addEventListener('click', () => this.startGame());
+        document.getElementById('creditsBtn').addEventListener('click', () => this.showCredits());
+        document.getElementById('quitBtn').addEventListener('click', () => this.quitGame());
+        document.getElementById('backFromCreditsBtn').addEventListener('click', () => this.backToMenu());
+        document.getElementById('resumeBtn').addEventListener('click', () => this.resumeGame());
+        document.getElementById('backFromPauseBtn').addEventListener('click', () => this.backToMenu());
+      }
+      
+      showPermissionDialog() {
+        document.getElementById('permissionDialog').style.display = 'block';
+      }
+      
+      allowDownload() {
+        document.getElementById('permissionDialog').style.display = 'none';
+        this.startAssetDownload();
+      }
+      
+      denyDownload() {
+        document.getElementById('permissionDialog').style.display = 'none';
+        this.showMainMenu();
+      }
+      
+      startAssetDownload() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        loadingScreen.style.display = 'flex';
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 15;
+          if (progress > 100) progress = 100;
+          
+          this.updateProgress(progress);
+          
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              loadingScreen.style.display = 'none';
+              this.showMainMenu();
+            }, 500);
+          }
+        }, 300);
+      }
+      
+      updateProgress(percent) {
+        const fill = document.getElementById('progressFill');
+        const text = document.getElementById('progressText');
+        fill.style.width = percent + '%';
+        text.textContent = Math.floor(percent) + '%';
+      }
+      
+      showMainMenu() {
+        document.getElementById('mainMenu').classList.remove('hidden');
+        this.gameState = 'menu';
+      }
+      
+      showCredits() {
+        document.getElementById('mainMenu').classList.add('hidden');
+        document.getElementById('creditsScreen').classList.remove('hidden');
+        this.gameState = 'credits';
+      }
+      
+      backToMenu() {
+        document.getElementById('mainMenu').classList.remove('hidden');
+        document.getElementById('creditsScreen').classList.add('hidden');
+        document.getElementById('pauseMenu').classList.remove('active');
+        this.gameState = 'menu';
+        document.exitPointerLock();
+      }
+      
+      startGame() {
+        document.getElementById('mainMenu').classList.add('hidden');
+        this.gameState = 'playing';
+        this.renderer.domElement.requestPointerLock();
+        this.createGameWorld();
+        this.animate();
+      }
+      
+      createGameWorld() {
+        const floorGeometry = new THREE.PlaneGeometry(100, 100);
+        const floorMaterial = new THREE.MeshStandardMaterial({
+          color: 0x333333,
+          roughness: 0.8,
+          metalness: 0.1
+        });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        this.scene.add(floor);
+        
+        const wallGeometry = new THREE.BoxGeometry(100, 20, 1);
+        const wallMaterial = new THREE.MeshStandardMaterial({
+          color: 0x1a1a1a,
+          roughness: 0.9,
+          metalness: 0.0
+        });
+        
+        const backWall = new THREE.Mesh(wallGeometry, wallMaterial);
+        backWall.position.z = -50;
+        backWall.castShadow = true;
+        backWall.receiveShadow = true;
+        this.scene.add(backWall);
+        
+        const frontWall = new THREE.Mesh(wallGeometry, wallMaterial);
+        frontWall.position.z = 50;
+        frontWall.castShadow = true;
+        frontWall.receiveShadow = true;
+        this.scene.add(frontWall);
+        
+        const leftWall = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 100), wallMaterial);
+        leftWall.position.x = -50;
+        leftWall.castShadow = true;
+        leftWall.receiveShadow = true;
+        this.scene.add(leftWall);
+        
+        const rightWall = new THREE.Mesh(new THREE.BoxGeometry(1, 20, 100), wallMaterial);
+        rightWall.position.x = 50;
+        rightWall.castShadow = true;
+        rightWall.receiveShadow = true;
+        this.scene.add(rightWall);
+        
+        const ceilingGeometry = new THREE.PlaneGeometry(100, 100);
+        const ceilingMaterial = new THREE.MeshStandardMaterial({
+          color: 0x0d0d0d,
+          roughness: 0.95,
+          metalness: 0.0
+        });
+        const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
+        ceiling.rotation.x = Math.PI / 2;
+        ceiling.position.y = 20;
+        ceiling.receiveShadow = true;
+        this.scene.add(ceiling);
+        
+        this.addProps();
+        this.addEnemies();
+        this.addPuzzles();
+        
+        document.getElementById('hud').classList.add('active');
+      }
+      
+      addProps() {
+        const propGeometry = new THREE.BoxGeometry(2, 2, 2);
+        const propMaterial = new THREE.MeshStandardMaterial({
+          color: 0x8b4513,
+          roughness: 0.7,
+          metalness: 0.3
+        });
+        
+        for (let i = 0; i < 5; i++) {
+          const prop = new THREE.Mesh(propGeometry, propMaterial);
+          prop.position.set(
+            Math.random() * 80 - 40,
+            1,
+            Math.random() * 80 - 40
+          );
+          prop.castShadow = true;
+          prop.receiveShadow = true;
+          this.scene.add(prop);
+        }
+      }
+      
+      addEnemies() {
+        const enemyGeometry = new THREE.SphereGeometry(1, 8, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({
+          color: 0xff4444,
+          roughness: 0.5,
+          metalness: 0.5,
+          emissive: 0xff2222,
+          emissiveIntensity: 0.3
+        });
+        
+        for (let i = 0; i < 3; i++) {
+          const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
+          enemy.position.set(
+            Math.random() * 60 - 30,
+            1,
+            Math.random() * 60 - 30
+          );
+          enemy.castShadow = true;
+          enemy.receiveShadow = true;
+          this.scene.add(enemy);
+          
+          this.enemies.push({
+            mesh: enemy,
+            position: enemy.position.clone(),
+            state: 'patrol',
+            speed: 0.05,
+            hearingRange: 20
+          });
+        }
+      }
+      
+      addPuzzles() {
+        const doorGeometry = new THREE.BoxGeometry(3, 5, 0.2);
+        const doorMaterial = new THREE.MeshStandardMaterial({
+          color: 0x2a2a2a,
+          roughness: 0.6,
+          metalness: 0.4
+        });
+        
+        const door = new THREE.Mesh(doorGeometry, doorMaterial);
+        door.position.set(0, 2.5, -45);
+        door.castShadow = true;
+        door.receiveShadow = true;
+        this.scene.add(door);
+        
+        this.puzzles.push({
+          mesh: door,
+          type: 'door',
+          locked: true,
+          requiredItem: 'keycard'
+        });
+      }
+      
+      updatePlayer() {
+        if (this.gameState !== 'playing') return;
+        
+        const moveVector = new THREE.Vector3();
+        
+        if (this.keys['w']) moveVector.z -= 1;
+        if (this.keys['s']) moveVector.z += 1;
+        if (this.keys['a']) moveVector.x -= 1;
+        if (this.keys['d']) moveVector.x += 1;
+        
+        this.player.isRunning = this.keys['shift'];
+        this.player.isCrouching = this.keys['control'];
+        
+        let currentSpeed = this.player.speed;
+        if (this.player.isRunning) currentSpeed = this.player.runSpeed;
+        if (this.player.isCrouching) currentSpeed = this.player.crouchSpeed;
+        
+        if (moveVector.length() > 0) {
+          moveVector.normalize();
+          this.player.position.add(moveVector.multiplyScalar(currentSpeed));
+        }
+        
+        this.camera.position.copy(this.player.position);
+        
+        if (this.mouse.locked) {
+          const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+          euler.setFromQuaternion(this.camera.quaternion);
+          
+          euler.setFromVector3(new THREE.Vector3(
+            euler.x - this.mouse.y * 0.003,
+            euler.y - this.mouse.x * 0.003,
+            0
+          ));
+          
+          this.camera.quaternion.setFromEuler(euler);
+        }
+        
+        if (this.flashlight) {
+          this.flashlight.position.copy(this.camera.position);
+          const direction = new THREE.Vector3(0, 0, -1);
+          direction.applyQuaternion(this.camera.quaternion);
+          this.flashlight.target.position.copy(this.camera.position).add(direction.multiplyScalar(30));
+        }
+      }
+      
+      updateEnemies() {
+        if (this.gameState !== 'playing') return;
+        
+        for (const enemy of this.enemies) {
+          if (enemy.state === 'patrol') {
+            enemy.mesh.position.x += Math.sin(Date.now() * 0.001) * 0.01;
+            enemy.mesh.position.z += Math.cos(Date.now() * 0.001) * 0.01;
+            
+            const distance = this.player.position.distanceTo(enemy.mesh.position);
+            if (distance < enemy.hearingRange) {
+              enemy.state = 'alert';
+            }
+          } else if (enemy.state === 'alert') {
+            const direction = this.player.position.clone().sub(enemy.mesh.position).normalize();
+            enemy.mesh.position.add(direction.multiplyScalar(enemy.speed * 1.5));
+            
+            const distance = this.player.position.distanceTo(enemy.mesh.position);
+            if (distance > enemy.hearingRange * 2) {
+              enemy.state = 'patrol';
+            }
+          }
+        }
+      }
+      
+      togglePause() {
+        if (this.gameState === 'playing') {
+          this.gameState = 'paused';
+          document.getElementById('pauseMenu').classList.add('active');
+          document.exitPointerLock();
+        } else if (this.gameState === 'paused') {
+          this.resumeGame();
+        }
+      }
+      
+      resumeGame() {
+        this.gameState = 'playing';
+        document.getElementById('pauseMenu').classList.remove('active');
+        this.renderer.domElement.requestPointerLock();
+      }
+      
+      toggleHUD() {
+        this.showHUD = !this.showHUD;
+        const hud = document.getElementById('hud');
+        if (this.showHUD) {
+          hud.classList.add('active');
+        } else {
+          hud.classList.remove('active');
+        }
+      }
+      
+      quitGame() {
+        window.location.reload();
+      }
+      
+      onWindowResize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
+        this.composer.setSize(width, height);
+      }
+      
+      animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        this.updatePlayer();
+        this.updateEnemies();
+        
+        this.composer.render();
+      }
+    }
+    
+    window.addEventListener('load', () => {
+      window.gameInstance = new ToyFactoryNightmare();
+    });
+  </script>
+</body>
+</html>
