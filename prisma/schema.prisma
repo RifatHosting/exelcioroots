@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteConfig {
+  id              String   @id @default(cuid())
+  siteName        String   @default("RRH Web Studio")
+  tagline         String   @default("Professional Frontend Development")
+  description     String   @default("We create stunning static HTML websites")
+  heroTitle       String   @default("Transform Your Ideas Into Reality")
+  heroSubtitle    String   @default("Professional frontend development services")
+  heroCtaText     String   @default("Get Started")
+  whatsappNumber  String   @default("6285779127761")
+  ownerName       String   @default("Rifat Radli Hidayat")
+  ownerAge        Int      @default(16)
+  ownerBio        String   @default("Young passionate web developer")
+  ownerLocation   String   @default("Indonesia")
+  footerText      String   @default("© 2024 RRH Web Studio. All rights reserved.")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  icon        String   @default("code")
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Pricing {
+  id          String   @id @default(cuid())
+  name        String
+  price       Int
+  description String
+  features    String   // JSON string array
+  isPopular   Boolean  @default(false)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  content     String
+  avatar      String?
+  rating      Int      @default(5)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Portfolio {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  image       String?
+  url         String?
+  technologies String
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
