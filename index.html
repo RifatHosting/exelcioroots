@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STATICLIFT - Website Frontend Statis HTML yang Cepat & Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            color: #FF0000;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FF0000, #E63939);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #FF0000;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #FF0000;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #FF0000, #E63939);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 60px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 0, 0, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+        }
+
+        .split-text {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .split-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(100px);
+            animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .letter-space {
+            display: inline-block;
+            width: 0.3em;
+        }
+
+        .blinking-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background-color: #FF0000;
+            margin-left: 0.1em;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: #cccccc;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF0000, #E63939);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid #FF0000;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(255, 0, 0, 0.5);
+            background: linear-gradient(135deg, #E63939, #FF0000);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #FF0000;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid #FF0000;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #FF0000;
+            color: white;
+            transform: translateY(-4px);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            opacity: 0;
+            animation: bounce 2s infinite, fadeInUp 1s ease 1s forwards;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(10px);
+            }
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: #FF0000;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #aaaaaa;
+            margin-bottom: 3rem;
+            max-width: 600px;
+        }
+
+        .section-highlight {
+            color: #FF0000;
+        }
+
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .service-card:hover::before {
+            left: 100%;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translateY(-8px);
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FF0000, #E63939);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .service-desc {
+            color: #aaaaaa;
+            line-height: 1.6;
+        }
+
+        /* Why Static HTML Section */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .benefit-item {
+            padding: 1.5rem;
+            border-left: 3px solid #FF0000;
+            background: rgba(255, 0, 0, 0.02);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            background: rgba(255, 0, 0, 0.08);
+            transform: translateX(10px);
+        }
+
+        .benefit-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #FF0000;
+        }
+
+        .benefit-desc {
+            color: #aaaaaa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* About Section */
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(0, 0, 0, 0.5));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 2px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .about-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .about-content p {
+            color: #aaaaaa;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .about-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #FF0000;
+        }
+
+        .stat-label {
+            color: #aaaaaa;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Testimonials Section */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 2rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.4);
+            transform: translateY(-8px);
+        }
+
+        .testimonial-stars {
+            color: #FF0000;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            color: #aaaaaa;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF0000, #E63939);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-info h4 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .testimonial-info p {
+            color: #888888;
+            font-size: 0.85rem;
+        }
+
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 2.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #FF0000;
+            background: rgba(255, 0, 0, 0.1);
+            transform: scale(1.05);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 0, 0, 0.6);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FF0000;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .pricing-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #FF0000;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-period {
+            color: #aaaaaa;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .pricing-features {
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            color: #aaaaaa;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #FF0000;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0a0a0a;
+            border-top: 1px solid rgba(255, 0, 0, 0.2);
+            padding: 3rem 2rem;
+            margin-top: 6rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #aaaaaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #FF0000;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 0, 0, 0.1);
+            padding-top: 2rem;
+            text-align: center;
+            color: #666666;
+            font-size: 0.9rem;
+        }
+
+        /* Scroll Reveal Animation */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Smooth transitions */
+        a, button {
+            transition: all 0.3s ease;
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">
+                <div class="logo-img">SL</div>
+                STATICLIFT
+            </div>
+            <div class="nav-links">
+                <a href="#services">Layanan</a>
+                <a href="#why-static">Mengapa Static</a>
+                <a href="#about">Tentang</a>
+                <a href="#testimonials">Testimoni</a>
+                <a href="#pricing">Harga</a>
+                <a href="https://wa.me/6285779127761" class="cta-btn">Hubungi via WhatsApp</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <div class="split-text">
+                    <span class="split-letter" style="animation-delay: 0s;">E</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.05s;">x</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.1s;">p</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.15s;">e</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.2s;">r</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.25s;">i</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.3s;">e</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.35s;">n</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.4s;">c</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.45s;">e</span>
+                </div>
+                <br>
+                <div class="split-text">
+                    <span class="split-letter" style="animation-delay: 0.5s;">l</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.55s;">i</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.6s;">f</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.65s;">t</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.7s;">o</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.75s;">f</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.8s;">f</span>
+                </div>
+                <br>
+                <div class="split-text">
+                    <span class="split-letter" style="animation-delay: 0.85s;">w</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.9s;">i</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 0.95s;">t</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1s;">h</span>
+                </div>
+                <br>
+                <div class="split-text">
+                    <span class="split-letter" style="animation-delay: 1.05s;">s</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.1s;">t</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.15s;">a</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.2s;">t</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.25s;">i</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.3s;">c</span>
+                </div>
+                <br>
+                <div class="split-text">
+                    <span class="split-letter" style="animation-delay: 1.35s;">H</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.4s;">T</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.45s;">M</span>
+                    <span class="letter-space"></span>
+                    <span class="split-letter" style="animation-delay: 1.5s;">L</span>
+                    <span class="blinking-cursor"></span>
+                </div>
+            </h1>
+            <p class="hero-subtitle">Website cepat, ringan, SEO-friendly, dan 100% custom untuk bisnis Anda</p>
+            <div class="hero-buttons">
+                <a href="https://wa.me/6285779127761" class="btn-primary">Hubungi via WhatsApp</a>
+                <a href="#services" class="btn-secondary">Lihat Layanan</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section" id="services">
+        <h2 class="section-title">Layanan <span class="section-highlight">STATICLIFT</span></h2>
+        <p class="section-subtitle">Kami menyediakan solusi website frontend statis yang cepat, ringan, dan profesional untuk berbagai kebutuhan bisnis Anda.</p>
+        <div class="services-grid">
+            <div class="service-card scroll-reveal">
+                <div class="service-icon">⚡</div>
+                <h3 class="service-title">Website Bisnis</h3>
+                <p class="service-desc">Website profesional untuk bisnis kecil dan menengah dengan desain modern dan performa optimal.</p>
+            </div>
+            <div class="service-card scroll-reveal">
+                <div class="service-icon">🎨</div>
+                <h3 class="service-title">Landing Page</h3>
+                <p class="service-desc">Landing page konversi tinggi dengan desain menarik dan call-to-action yang efektif.</p>
+            </div>
+            <div class="service-card scroll-reveal">
+                <div class="service-icon">📁</div>
+                <h3 class="service-title">Portofolio Digital</h3>
+                <p class="service-desc">Showcase karya Anda dengan portofolio digital yang elegan dan responsif di semua perangkat.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Static HTML Section -->
+    <section class="section" id="why-static">
+        <h2 class="section-title">Mengapa <span class="section-highlight">Static HTML</span>?</h2>
+        <p class="section-subtitle">HTML statis memberikan keuntungan yang tidak tertandingi untuk website modern.</p>
+        <div class="benefits-grid">
+            <div class="benefit-item scroll-reveal">
+                <div class="benefit-title">⚡ Super Cepat</div>
+                <p class="benefit-desc">Tidak ada database atau server processing. Load time di bawah 1 detik.</p>
+            </div>
+            <div class="benefit-item scroll-reveal">
+                <div class="benefit-title">🔒 Aman</div>
+                <p class="benefit-desc">Tidak ada vulnerability database atau backend. Keamanan maksimal.</p>
+            </div>
+            <div class="benefit-item scroll-reveal">
+                <div class="benefit-title">🌍 SEO Friendly</div>
+                <p class="benefit-desc">Struktur HTML yang clean dan semantic untuk ranking Google optimal.</p>
+            </div>
+            <div class="benefit-item scroll-reveal">
+                <div class="benefit-title">💰 Biaya Hosting Murah</div>
+                <p class="benefit-desc">Hosting statis jauh lebih murah dari hosting dengan database.</p>
+            </div>
+            <div class="benefit-item scroll-reveal">
+                <div class="benefit-title">📱 Responsive Design</div>
+                <p class="benefit-desc">Sempurna di desktop, tablet, dan mobile dengan CSS modern.</p>
+            </div>
+            <div class="benefit-item scroll-reveal">
+                <div class="benefit-title">🎯 100% Custom</div>
+                <p class="benefit-desc">Desain sesuai brand Anda, bukan template generic.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <h2 class="section-title">Tentang <span class="section-highlight">Developer</span></h2>
+        <div class="about-container">
+            <div class="about-image">👨‍💻</div>
+            <div class="about-content scroll-reveal">
+                <h3>Rifat Radli Hidayat</h3>
+                <p>Saya adalah developer frontend berusia 16 tahun dari Indonesia yang passionate dalam menciptakan website berkualitas tinggi. Sejak usia 13 tahun, saya sudah mulai belajar HTML, CSS, dan JavaScript.</p>
+                <p>Hingga saat ini, saya telah berhasil membuat puluhan website profesional untuk klien dari berbagai industri. Setiap project dikerjakan dengan detail, perhatian terhadap kualitas, dan komitmen untuk memberikan hasil terbaik.</p>
+                <p><strong>Spesialisasi saya:</strong> Frontend HTML/CSS/JavaScript, Responsive Design, UI/UX Implementation, dan Website Optimization.</p>
+                <div class="about-stats">
+                    <div class="stat">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Website Dibuat</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">3-7</div>
+                        <div class="stat-label">Hari Pengerjaan</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Custom Design</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section" id="testimonials">
+        <h2 class="section-title">Testimoni <span class="section-highlight">Klien</span></h2>
+        <p class="section-subtitle">Kepuasan klien adalah prioritas utama kami. Berikut adalah testimoni dari beberapa klien yang puas.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card scroll-reveal">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Website yang dibuat Rifat sangat profesional dan cepat. Desainnya sesuai dengan visi saya dan proses pengerjaannya sangat transparan. Highly recommended!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">BK</div>
+                    <div class="testimonial-info">
+                        <h4>Budi Kusuma</h4>
+                        <p>Pemilik Toko Online</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card scroll-reveal">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Saya sangat terkesan dengan kecepatan website dan perhatian Rifat terhadap detail. Website saya loading super cepat dan conversion rate meningkat 40%!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">SR</div>
+                    <div class="testimonial-info">
+                        <h4>Siti Rahma</h4>
+                        <p>Digital Marketing Manager</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card scroll-reveal">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"Portofolio website yang Rifat buat untuk saya sangat memukau. Banyak klien baru yang datang setelah website ini diluncurkan. Terima kasih!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">AW</div>
+                    <div class="testimonial-info">
+                        <h4>Ahmad Wijaya</h4>
+                        <p>Fotografer Profesional</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section" id="pricing">
+        <h2 class="section-title">Paket <span class="section-highlight">Harga</span></h2>
+        <p class="section-subtitle">Pilih paket yang sesuai dengan kebutuhan dan budget Anda. Semua paket termasuk revisi unlimited.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card scroll-reveal">
+                <h3 class="pricing-title">Starter</h3>
+                <div class="pricing-price">Rp 500K</div>
+                <p class="pricing-period">Satu kali pembayaran</p>
+                <ul class="pricing-features">
+                    <li>Landing page 1 halaman</li>
+                    <li>Responsive design</li>
+                    <li>3 revisi</li>
+                    <li>Hosting 1 bulan gratis</li>
+                </ul>
+                <a href="https://wa.me/6285779127761" class="btn-primary" style="width: 100%; text-align: center; display: block;">Pesan Sekarang</a>
+            </div>
+            <div class="pricing-card featured scroll-reveal">
+                <div class="pricing-badge">POPULER</div>
+                <h3 class="pricing-title">Professional</h3>
+                <div class="pricing-price">Rp 1.5M</div>
+                <p class="pricing-period">Satu kali pembayaran</p>
+                <ul class="pricing-features">
+                    <li>Website 5-10 halaman</li>
+                    <li>Responsive design</li>
+                    <li>Revisi unlimited</li>
+                    <li>Hosting 3 bulan gratis</li>
+                    <li>Domain gratis 1 tahun</li>
+                </ul>
+                <a href="https://wa.me/6285779127761" class="btn-primary" style="width: 100%; text-align: center; display: block;">Pesan Sekarang</a>
+            </div>
+            <div class="pricing-card scroll-reveal">
+                <h3 class="pricing-title">Enterprise</h3>
+                <div class="pricing-price">Custom</div>
+                <p class="pricing-period">Konsultasi gratis</p>
+                <ul class="pricing-features">
+                    <li>Website unlimited halaman</li>
+                    <li>Custom features & animations</li>
+                    <li>Revisi unlimited</li>
+                    <li>Hosting 6 bulan gratis</li>
+                    <li>Support 3 bulan</li>
+                </ul>
+                <a href="https://wa.me/6285779127761" class="btn-primary" style="width: 100%; text-align: center; display: block;">Konsultasi</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="section" style="text-align: center; padding: 6rem 2rem; background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(0, 0, 0, 0.5)); border-radius: 12px; margin: 3rem 2rem;">
+        <h2 class="section-title" style="margin-bottom: 1rem;">Siap Membuat Website Impian Anda?</h2>
+        <p class="section-subtitle" style="margin: 0 auto 2rem; max-width: 600px;">Hubungi kami sekarang melalui WhatsApp dan dapatkan konsultasi gratis untuk project website Anda!</p>
+        <a href="https://wa.me/6285779127761" class="btn-primary" style="font-size: 1.1rem; padding: 1.2rem 3rem;">Hubungi via WhatsApp</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>STATICLIFT</h4>
+                <p style="color: #aaaaaa; font-size: 0.9rem;">Website frontend statis HTML yang cepat, ringan, dan profesional untuk bisnis Anda.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Layanan</h4>
+                <a href="#services">Website Bisnis</a>
+                <a href="#services">Landing Page</a>
+                <a href="#services">Portofolio Digital</a>
+            </div>
+            <div class="footer-section">
+                <h4>Kontak</h4>
+                <a href="https://wa.me/6285779127761">WhatsApp: +62 857-7912-7761</a>
+                <a href="mailto:contact@staticlift.com">Email: contact@staticlift.com</a>
+            </div>
+            <div class="footer-section">
+                <h4>Sosial Media</h4>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 STATICLIFT. Dibuat oleh Rifat Radli Hidayat. Semua hak dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Split letter animation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll reveal animation
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-reveal').forEach(element => {
+                observer.observe(element);
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href !== '#' && document.querySelector(href)) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Navbar background on scroll
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(0, 0, 0, 0.98)';
+                    navbar.style.borderBottom = '1px solid rgba(255, 0, 0, 0.3)';
+                } else {
+                    navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+                    navbar.style.borderBottom = '1px solid rgba(255, 0, 0, 0.2)';
+                }
+            });
+
+            // Parallax effect on hero section
+            const hero = document.querySelector('.hero');
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY;
+                hero.style.backgroundPosition = `0 ${scrollPosition * 0.5}px`;
+            });
+
+            // Add hover effect to service cards
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.zIndex = '10';
+                });
+            });
+        });
+
+        // Prevent default scroll behavior for smooth scroll-jacking effect
+        let isScrolling = false;
+        let lastScrollTime = 0;
+
+        window.addEventListener('wheel', function(e) {
+            const now = Date.now();
+            if (now - lastScrollTime < 100) {
+                e.preventDefault();
+            }
+            lastScrollTime = now;
+        }, { passive: false });
+    </script>
+</body>
+</html>
